@@ -37,3 +37,12 @@ function popUp() {
 	var data = getData();
 	alert(data.puffs[0].phrase);
 }
+
+function appendLItoUL(ulNode) {
+	var oLI=document.createElement('li');
+	var oA=document.createElement('a');
+	var text=document.createTextNode('text');
+	oA.appendChild(text);
+	oLI.appendChild(oA);
+	ulNode.insertBefore(oLI, ulNode.childNodes[0]);
+}

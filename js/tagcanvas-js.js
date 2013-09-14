@@ -9,6 +9,7 @@ function windowOnload() {
             freezeActive: true
         };
         try {
+          appendLItoUL(document.getElementById('tags').childNodes[1])
           TagCanvas.Start('myCanvas','tags', options);
         } catch(e) {
           // something went wrong, hide the canvas container
