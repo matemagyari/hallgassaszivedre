@@ -5,6 +5,7 @@ var informationContainerElementId = 'informationContainer';
 function windowOnload() {
     convertCloudToDOMElements(getCloud());
     startTagCanvas();
+    document.getElementById('testAnchor').onmouseover = function () { console.log('hello'); };
 };
 
 function startTagCanvas() {
@@ -15,8 +16,8 @@ function startTagCanvas() {
             depth: 0.8,
             maxSpeed: 0.10,
             weight: true,
-            weightMode: 'both'
-            //, freezeActive: true
+            weightMode: 'both',
+            freezeActive: true
         };
         try {
           TagCanvas.Start(canvasId,tagsElementId, options);
@@ -54,6 +55,12 @@ function creatAnchor(puff) {
     oA.onclick = clickOnPuff(puff);
     oA.style.fontSize = puff.weight+'pt';
     oA.href = '#';
+    //oA.onmouseover = function () { console.log('hello'); };
+    /* 
+    oA.addEventListener('mouseover', function (e) {
+        e.preventDefault();
+        console.log('hiii');
+    }); */
     return oA; 
 }
 
