@@ -10,13 +10,13 @@ function windowOnload() {
 
 function startTagCanvas() {
         var options = {
-            textColour: '#ff0000',
-            outlineColour: '#ff00ff',
+            textColour: '#000000',
+            outlineColour: '#000000',
             reverse: true,
             depth: 0.8,
             maxSpeed: 0.10,
             weight: true,
-            weightMode: 'both',
+            weightMode: 'size',
             freezeActive: true
         };
         try {
@@ -54,6 +54,7 @@ function creatAnchor(puff) {
     oA.appendChild(textNode);  
     oA.onclick = clickOnPuff(puff);
     oA.style.fontSize = puff.weight+'pt';
+    oA.style.fontFamily = 'Gill Sans",Arial,Helvetica,sans-serif';
     oA.href = '#';
     //oA.onmouseover = function () { console.log('hello'); };
     /* 
