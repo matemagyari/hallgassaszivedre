@@ -6,9 +6,9 @@ return {
 		  weight : 10,
 		  date : "01-01-2013" 
 		},	
-		{ phrase : "Plagi bacsi",
+		{ phrase : "Plagi bacsi (Skicc Pali/Pitt Schmal)",
 			content : "Ide kerulnek a Schmidttel kapcsolatos irasok.",
-			weight : 5,
+			weight : 10,
 			date : "01-01-2013" 
 		},	
 		{ phrase : "Vak kommondor",
