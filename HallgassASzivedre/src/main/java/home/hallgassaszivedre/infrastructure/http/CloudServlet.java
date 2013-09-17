@@ -13,11 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
 
 @SuppressWarnings("serial")
-@Component("cloudServlet")
+//@Component("cloudServlet")
 public class CloudServlet extends HttpServlet implements HttpRequestHandler {
 	
     @Autowired
@@ -40,5 +39,12 @@ public class CloudServlet extends HttpServlet implements HttpRequestHandler {
     @Override
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
+    }
+    
+    public void setCloudAppService(CloudAppService cloudAppService) {
+        this.cloudAppService = cloudAppService;
+    }
+    public void setDataConverter(DataConverter dataConverter) {
+        this.dataConverter = dataConverter;
     }
 }

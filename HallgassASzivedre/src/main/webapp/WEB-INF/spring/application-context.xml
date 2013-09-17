@@ -12,4 +12,8 @@
 		base-package="home.hallgassaszivedre" />
 	<aop:aspectj-autoproxy />
 	<!-- Persistence Config -->
+	<bean id="cloudServlet" class="home.hallgassaszivedre.infrastructure.http.CloudServlet">
+	   <property name="cloudAppService" ref="cloudAppService"/>
+	   <property name="dataConverter" ref="dataConverter"/>
+	</bean>
 </beans>
