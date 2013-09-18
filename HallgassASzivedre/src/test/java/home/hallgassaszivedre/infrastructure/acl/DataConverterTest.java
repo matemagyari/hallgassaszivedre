@@ -17,9 +17,9 @@ public class DataConverterTest {
 		Puff puff2 = new Puff();
 		List<Puff> puffs = Arrays.asList(puff1, puff2);
 		//act
-		String result = testObj.convert(puffs);
+		//String result = testObj.convertToDTO(puffs);
 		//assert
-		System.err.println(result);
+		//System.err.println(result);
 	}
 
 }

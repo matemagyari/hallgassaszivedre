@@ -16,7 +16,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
 		<display-name>CloudServlet</display-name>
 		<servlet-name>cloudServlet</servlet-name>
+		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    <!-- 
 		<servlet-class>home.hallgassaszivedre.infrastructure.http.CloudServlet</servlet-class>
+		 -->
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>cloudServlet</servlet-name>

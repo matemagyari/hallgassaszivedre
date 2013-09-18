@@ -3,8 +3,12 @@ var canvasId = 'myCanvas';
 var informationContainerElementId = 'informationContainer';
 
 function windowOnload() {
-    convertCloudToDOMElements(getCloud());
-    startTagCanvas();
+	
+	getCloud(function(data) {
+	    convertCloudToDOMElements(data);
+	    startTagCanvas();
+	});
+
 };
 
 function startTagCanvas() {

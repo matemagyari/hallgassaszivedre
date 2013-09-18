@@ -12,10 +12,18 @@ import org.springframework.stereotype.Component;
 public class CloudAppService {
 	
     @Autowired
-	private PuffRepository puffRepository;
-	
+    public PuffRepository puffRepository;
+    
 	public List<Puff> getPuffs() {
-		return puffRepository.findAll();
+	    return puffRepository.findAll();
+	}
+	
+	public void createPuff(Puff puff) {
+	    puffRepository.create(puff);
+	}
+	
+	public void updatePuff(Puff puff) {
+	    puffRepository.update(puff);
 	}
 
 }

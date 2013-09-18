@@ -6,4 +6,8 @@ public interface PuffRepository {
 
 	List<Puff> findAll();
 
+    void update(Puff puff);
+
+    void create(Puff puff);
+
 }
