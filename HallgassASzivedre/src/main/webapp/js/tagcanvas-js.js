@@ -68,11 +68,3 @@ function creatAnchor(puff) {
     return oA; 
 }
 
-function clickOnPuff(puff) {
-    return function () {
-        $.get('cloudservlet', function(data) {
-        	document.getElementById(informationContainerElementId).innerHTML = data;
-        });
-        //document.getElementById(informationContainerElementId).innerHTML = puff.content;
-    }
-}
