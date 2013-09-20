@@ -4,10 +4,11 @@ var informationContainerElementId = 'informationContainer';
 
 function windowOnload() {
 	
-	getCloud(function(data) {
-	    convertCloudToDOMElements(data);
+	var callbackAfterDataArrived = function(data) {
+		tagCanvasConverter.convertCloudToDOMElements(data);
 	    startTagCanvas();
-	});
+	};
+	repository.getData(callbackAfterDataArrived);
 
 };
 
@@ -30,41 +31,42 @@ function startTagCanvas() {
         }    
 }
 
-function convertCloudToDOMElements(cloudPuffs) {
+var tagCanvasConverter = {
+		
+		convertCloudToDOMElements : function(cloudPuffs) {
 
-    var oUL = document.createElement('ul');
-    var tagsDiv = document.getElementById(tagsElementId);
-    tagsDiv.appendChild(oUL);
+		    var oUL = document.createElement('ul');
+		    var tagsDiv = document.getElementById(tagsElementId);
+		    tagsDiv.appendChild(oUL);
 
-    //document.getElementById(informationContainerElementId).addEventListener("mouseover", function () { console.log('informationContainer ')}, false);
+		    for (var i=0; i < cloudPuffs.length; i++) {
+		        var anchor = this.creatAnchor(cloudPuffs[i]);
+		        this.appendAtoUL(tagsDiv.childNodes[1], anchor);
+		    }
+		},
+		appendAtoUL : function(ulNode, anchor) {
+		    var oLI = document.createElement('li');
+		    oLI.appendChild(anchor);
+		    ulNode.insertBefore(oLI, ulNode.childNodes[0]);
+		},
 
-    for (var i=0; i < cloudPuffs.length; i++) {
-        var anchor = creatAnchor(cloudPuffs[i]);
-        appendAtoUL(tagsDiv.childNodes[1], anchor);
-    }
-}
-
-
-function appendAtoUL(ulNode, anchor) {
-    var oLI = document.createElement('li');
-    oLI.appendChild(anchor);
-    ulNode.insertBefore(oLI, ulNode.childNodes[0]);
+		creatAnchor : function(puff) {
+		    var oA = document.createElement('a');
+		    var textNode = document.createTextNode(puff.phrase);
+		    oA.appendChild(textNode);  
+		    oA.onclick = function () { formControl.clickOnPuff(puff); };
+		    oA.style.fontSize = puff.weight+'pt';
+		    oA.style.fontFamily = 'Gill Sans",Arial,Helvetica,sans-serif';
+		    oA.href = '#';
+		    //oA.onmouseover = function () { console.log('hello'); };
+		    /* 
+		    oA.addEventListener('mouseover', function (e) {
+		        e.preventDefault();
+		        console.log('hiii');
+		    }); */
+		    return oA; 
+		}	
 };
 
-function creatAnchor(puff) {
-    var oA = document.createElement('a');
-    var textNode = document.createTextNode(puff.phrase);
-    oA.appendChild(textNode);  
-    oA.onclick = clickOnPuff(puff);
-    oA.style.fontSize = puff.weight+'pt';
-    oA.style.fontFamily = 'Gill Sans",Arial,Helvetica,sans-serif';
-    oA.href = '#';
-    //oA.onmouseover = function () { console.log('hello'); };
-    /* 
-    oA.addEventListener('mouseover', function (e) {
-        e.preventDefault();
-        console.log('hiii');
-    }); */
-    return oA; 
-}
+
 

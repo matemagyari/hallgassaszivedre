@@ -4,10 +4,10 @@
     <title>Hallgass a szivedre!</title>
     <!--[if lt IE 9]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
     <script src="js/lib/tagcanvas.min.js" type="text/javascript"></script>
-    <script src="js/tagcanvas-js.js" type="text/javascript"></script>
+    <script src="js/db/db.js" type="text/javascript"></script>
     <script src="js/dataprovider.js" type="text/javascript"></script>
     <script src="js/control.js" type="text/javascript"></script>
-    <script src="js/db/db.js" type="text/javascript"></script>
+    <script src="js/tagcanvas-js.js" type="text/javascript"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -15,17 +15,15 @@
     </script>
   </head>
   <body>
-    <h1>Hallgass a szivedre!</h1>
+    <h1>Hallgass a szivedre!cccc</h1>
+          <div id="tags">Johnny</div>
     <div id="container" style="height:500px;width:1200px;float:left;">
       <div id="myCanvasContainer" style="height:500px;width:700px;float:left;">
         <canvas width="1000" height="400" id="myCanvas">
-          <p>Anything in here will be replaced on browsers that support the canvas element</p>
+          Anything in here will be replaced on browsers that support the canvas element
         </canvas>
       </div>
       <div id="informationContainer" style="height:500px;width:400px;float:left;border:thick solid #000000">
-        Hello Content here
-        <a href="basicservlet">Basic Servlet</a>
-        <a href="http://www.google.com">Google</a>
       </div>
       <div id="adminContainer">
       	<table>
@@ -35,7 +33,7 @@
       		</tr>
       		<tr>
       			<td>Tartalom</td>
-      			<td><textarea id="contentInput"/></td>
+      			<td><textarea id="contentInput"></textarea></td>
       		</tr>
       		<tr>
       			<td>Jelentoseg</td>
@@ -46,12 +44,11 @@
       			<td><input id="dateInput" type="date"/></td>
       		</tr>
       		<tr>
-      			<input type="button" value="Ment" onclick="savePuff()"/>
+      			<td><input type="button" value="Ment" onclick="savePuff()"/></td>
       		</tr>
       	</table>
       </div>
     </div>
-    <div id="tags"/>
 
   </body>
 </html>

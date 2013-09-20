@@ -1,42 +1,44 @@
-var selectedPuff = {};
-var puffs = {}
+var fakeRepository = {
 
-function getCloud(dataDisplayFunction) {
-    $.get('cloudservlet?action=get_all', function(data) {
-    	puffs = data;
-    	dataDisplayFunction(data);
-    });
-}
-
-function clickOnPuff(puff) {
-	
-	selectedPuff = puff;
-	filloutForm(puff);
-	/*
-    return function () {
-        $.get('cloudservlet', function(data) {
-        	document.getElementById(informationContainerElementId).innerHTML = data;
-        });
-        //document.getElementById(informationContainerElementId).innerHTML = puff.content;
-    }
-    */
-}
-
-function savePuff() {
-
-	var puff = getPuffFromForm();
-	selectedPuff.phrase = puff.phrase;
-	selectedPuff.weight = puff.weight;
-	selectedPuff.date = puff.date;
-	selectedPuff.content = puff.content;
-	
-	if (selectedPuff.id) {
-	    $.post('cloudservlet?action=update', function(data) {
-	    	console.log(data)
-	    });		
-	} else {
-	    $.post('cloudservlet?action=create', function(data) {
-	    	console.log(data)
-	    });		
+	dataMap : {},	
+	init : function () {
+		dataMap = fakeDB.getData().puffs;
+	},
+	getData : function(callback) {
+		callback(dataMap);
+	},
+	createPuff : function(puff) {
+		puff.id = data.length;
+		dataMap.push(puff);
+	},
+	updatePuff : function(puff) {
+		var index = 0;
+		for(;index<dataMap.length && puff.id != dataMap[index].id;index++) {
+		}
+		console.log('index ' + index);
+		dataMap[index] = puff;
 	}
-}
+};
+
+var realRepository = {
+		
+	getData : function(callback) {
+		$.get('cloudservlet?action=get_all', function(data) {
+			puffs = data;
+			callback(data);
+		});
+	},
+	createPuff : function(puff) {
+		$.post('cloudservlet?action=update', function(data) {
+			console.log(data);
+		});		
+	},
+	updatePuff : function(puff) {
+		$.post('cloudservlet?action=update', function(data) {
+			console.log(data);
+		});		
+	}
+};
+
+fakeRepository.init();
+var repository = fakeRepository;
