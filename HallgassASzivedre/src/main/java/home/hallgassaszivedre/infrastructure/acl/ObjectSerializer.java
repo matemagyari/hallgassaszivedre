@@ -19,7 +19,7 @@ public class ObjectSerializer {
     private ObjectMapper mapper;
 
     public ObjectSerializer() {
-        mapper = null;
+        mapper = new ObjectMapper();
     }
 
     public byte[] getJsonBytes(Serializable obj) {
@@ -85,15 +85,6 @@ public class ObjectSerializer {
 
     public ObjectMapper getMapper() {
         return mapper;
-    }
-
-    @Resource
-    public void setMapper(ObjectMapper objectMapper) {
-        this.mapper = objectMapper;
-        this.mapper.enable(Feature.USE_BIG_INTEGER_FOR_INTS);
-        this.mapper.setSerializationInclusion(Inclusion.NON_NULL);
-        this.mapper.disable(Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.mapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT, "type");
     }
 
 }

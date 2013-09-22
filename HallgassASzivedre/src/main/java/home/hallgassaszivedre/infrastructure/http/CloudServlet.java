@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
@@ -20,48 +21,57 @@ import org.springframework.web.HttpRequestHandler;
 @Component("cloudServlet")
 public class CloudServlet implements HttpRequestHandler {
 
-    @Autowired
-    private CloudAppService cloudAppService;
-    @Autowired
-    private DataConverter dataConverter;
+	@Autowired
+	private CloudAppService cloudAppService;
+	@Autowired
+	private DataConverter dataConverter;
 
-    @Override
-    public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@Override
+	public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
-        String json = null;
-        
-        UIAction uiAction = UIAction.valueOf(req.getParameter("action"));
+		String json = "ok";
+		resp.setContentType("text/json");
 
-        if (UIAction.get_all == uiAction) {
-            List<Puff> puffs = cloudAppService.getPuffs();
-            json = dataConverter.convertToDTO(puffs);
-        } else if (UIAction.create == uiAction) {
-            Puff puff = dataConverter.convertFromDTO(getPostBody(req));
-            cloudAppService.createPuff(puff);
-        } else if (UIAction.update == uiAction) {
-            Puff puff = dataConverter.convertFromDTO(getPostBody(req));
-            cloudAppService.updatePuff(puff);
-        } 
-        
-        resp.setContentType("text/json");
-        resp.getWriter().println(json);
-    }
+		UIAction uiAction = UIAction.valueOf(req.getParameter("action"));
 
-    private static String getPostBody(HttpServletRequest request) {
-        try {
-            StringWriter writer = new StringWriter();
-            IOUtils.copy(request.getInputStream(), writer, "utf-8");
-            return writer.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+		try {
+			if (UIAction.get_all == uiAction) {
+				List<Puff> puffs = cloudAppService.getPuffs();
+				json = dataConverter.toJSON(puffs);
+			} else if (UIAction.create == uiAction) {
+				Puff puff = dataConverter.fromJSON(getPostBody(req));
+				cloudAppService.createPuff(puff);
+			} else if (UIAction.update == uiAction) {
+				Puff puff = dataConverter.fromJSON(getPostBody(req));
+				cloudAppService.updatePuff(puff);
+			}
+		} catch (Exception ex) {
+			json = ex.getMessage();
+		}
 
-    public void setCloudAppService(CloudAppService cloudAppService) {
-        this.cloudAppService = cloudAppService;
-    }
+		resp.getWriter().println(json);
+	}
 
-    public void setDataConverter(DataConverter dataConverter) {
-        this.dataConverter = dataConverter;
-    }
+	private static String getPostBody(HttpServletRequest request) {
+		try {
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(request.getInputStream(), writer, "utf-8");
+			String body = writer.toString();
+			if (StringUtils.isBlank(body)) {
+				throw new RuntimeException("Post body is empty");
+			}
+			return body;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void setCloudAppService(CloudAppService cloudAppService) {
+		this.cloudAppService = cloudAppService;
+	}
+
+	public void setDataConverter(DataConverter dataConverter) {
+		this.dataConverter = dataConverter;
+	}
 }

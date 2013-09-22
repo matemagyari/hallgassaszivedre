@@ -1,15 +1,36 @@
 var tagsElementId = 'tags';
-var canvasId = 'myCanvas';
 var informationContainerElementId = 'informationContainer';
 
 function windowOnload() {
 	
 	var callbackAfterDataArrived = function(data) {
-		tagCanvasConverter.convertCloudToDOMElements(data);
+		tagCanvasConverter.convertCloudToDOMElements(data, tagsElementId);
 	    startTagCanvas();
 	};
 	repository.getData(callbackAfterDataArrived);
 
+};
+
+function adminWindowOnload() {
+	
+	var callbackAfterDataArrived = function(data) {
+		tagCanvasConverter.convertCloudToDOMElements(data, 'puffListContainer');
+	};
+	repository.getData(callbackAfterDataArrived);
+
+};
+
+function updatePuff() {
+	var callAfterUpdate = function() {
+		adminWindowOnload();
+	};
+	formControl.updatePuff(callAfterUpdate);
+};
+function createPuff() {
+	var callAfterUpdate = function() {
+		adminWindowOnload();
+	};
+	formControl.createPuff(callAfterUpdate);
 };
 
 function startTagCanvas() {
@@ -24,7 +45,7 @@ function startTagCanvas() {
             freezeActive: true
         };
         try {
-          TagCanvas.Start(canvasId,tagsElementId, options);
+          TagCanvas.Start('myCanvas',tagsElementId, options);
         } catch(e) {
           // something went wrong, hide the canvas container
           document.getElementById('myCanvasContainer').style.display = 'none';
@@ -33,15 +54,18 @@ function startTagCanvas() {
 
 var tagCanvasConverter = {
 		
-		convertCloudToDOMElements : function(cloudPuffs) {
+		convertCloudToDOMElements : function(cloudPuffs, divId) {
 
 		    var oUL = document.createElement('ul');
-		    var tagsDiv = document.getElementById(tagsElementId);
+		    var tagsDiv = document.getElementById(divId);
+		    while( tagsDiv.hasChildNodes() ){
+		    	tagsDiv.removeChild(tagsDiv.lastChild);
+		    }
 		    tagsDiv.appendChild(oUL);
 
 		    for (var i=0; i < cloudPuffs.length; i++) {
 		        var anchor = this.creatAnchor(cloudPuffs[i]);
-		        this.appendAtoUL(tagsDiv.childNodes[1], anchor);
+		        this.appendAtoUL(tagsDiv.childNodes[0], anchor);
 		    }
 		},
 		appendAtoUL : function(ulNode, anchor) {
@@ -58,12 +82,6 @@ var tagCanvasConverter = {
 		    oA.style.fontSize = puff.weight+'pt';
 		    oA.style.fontFamily = 'Gill Sans",Arial,Helvetica,sans-serif';
 		    oA.href = '#';
-		    //oA.onmouseover = function () { console.log('hello'); };
-		    /* 
-		    oA.addEventListener('mouseover', function (e) {
-		        e.preventDefault();
-		        console.log('hiii');
-		    }); */
 		    return oA; 
 		}	
 };

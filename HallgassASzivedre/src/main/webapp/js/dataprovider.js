@@ -1,44 +1,58 @@
 var fakeRepository = {
 
-	dataMap : {},	
-	init : function () {
-		dataMap = fakeDB.getData().puffs;
-	},
 	getData : function(callback) {
-		callback(dataMap);
+		callback(fakeDB.puffs);
 	},
-	createPuff : function(puff) {
-		puff.id = data.length;
-		dataMap.push(puff);
+	createPuff : function(puff, callAfterUpdate) {
+		puff.id = fakeDB.puffs.length+1;
+		fakeDB.puffs.push(puff);
+		callAfterUpdate();
 	},
-	updatePuff : function(puff) {
+	updatePuff : function(puff, callAfterUpdate) {
 		var index = 0;
-		for(;index<dataMap.length && puff.id != dataMap[index].id;index++) {
+		for (; index < fakeDB.puffs.length && puff.id != fakeDB.puffs[index].id; index++) {
 		}
-		console.log('index ' + index);
-		dataMap[index] = puff;
+		fakeDB.puffs[index] = puff;
+		callAfterUpdate();
 	}
 };
 
 var realRepository = {
-		
+
 	getData : function(callback) {
-		$.get('cloudservlet?action=get_all', function(data) {
-			puffs = data;
+		$.get('cloudservlet?action=get_all', function(jsonData) {
+			var data = [];
+			for ( var i = 0; i < jsonData.length; i++) {
+				data.push(jQuery.parseJSON(jsonData[i]));
+			}
 			callback(data);
 		});
 	},
-	createPuff : function(puff) {
-		$.post('cloudservlet?action=update', function(data) {
-			console.log(data);
-		});		
+	createPuff : function(puff, callAfterUpdate) {
+		$.ajax({
+			type : "POST",
+			url : "cloudservlet?action=create",
+			contentType : 'application/json',
+			data : JSON.stringify(puff, callAfterUpdate),
+			success : function(responseData) {
+					console.log('response to create', responseData);
+					callAfterUpdate();
+			}
+		});
 	},
 	updatePuff : function(puff) {
-		$.post('cloudservlet?action=update', function(data) {
-			console.log(data);
-		});		
+		$.ajax({
+			type : "POST",
+			url : "cloudservlet?action=update",
+			contentType : 'application/json',
+			data : JSON.stringify(puff),
+			success : function(responseData) {
+					console.log('response to create', responseData);
+					callAfterUpdate();
+			}
+		});
 	}
 };
 
-fakeRepository.init();
 var repository = fakeRepository;
+//var repository = realRepository;

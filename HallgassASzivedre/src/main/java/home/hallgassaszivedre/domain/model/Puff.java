@@ -1,9 +1,6 @@
 package home.hallgassaszivedre.domain.model;
 
-import java.io.Serializable;
-
-@SuppressWarnings("serial")
-public class Puff implements Serializable {
+public class Puff {
 	
 	private int id;
 	private String phrase;

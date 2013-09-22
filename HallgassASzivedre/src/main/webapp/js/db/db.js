@@ -1,6 +1,4 @@
 var fakeDB = {
-	getData : function() {
-		return {
 			puffs : [
 					{
 						id : 1,
@@ -51,6 +49,4 @@ var fakeDB = {
 						weight : 15,
 						date : "01-01-2012"
 					} ]
-		};
-	}
 };
