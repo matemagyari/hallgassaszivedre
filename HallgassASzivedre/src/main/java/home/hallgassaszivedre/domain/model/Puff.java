@@ -2,17 +2,17 @@ package home.hallgassaszivedre.domain.model;
 
 public class Puff {
 	
-	private int id;
+	private Long id;
 	private String phrase;
 	private String content;
 	private String date;
 	private int weight;
 	
 	
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getPhrase() {

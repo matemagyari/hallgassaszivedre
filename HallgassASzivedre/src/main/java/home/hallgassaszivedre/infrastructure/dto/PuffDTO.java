@@ -2,20 +2,24 @@ package home.hallgassaszivedre.infrastructure.dto;
 
 import java.io.Serializable;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+
+@Entity
 @SuppressWarnings("serial")
 public class PuffDTO implements Serializable {
 	
-	private int id;
+	@Id private Long id;
 	private String phrase;
 	private String content;
 	private String date;
 	private int weight;
 	
 	
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getPhrase() {

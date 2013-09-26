@@ -4,7 +4,7 @@ var fakeRepository = {
 		callback(fakeDB.puffs);
 	},
 	createPuff : function(puff, callAfterUpdate) {
-		puff.id = fakeDB.puffs.length+1;
+		puff.id = fakeDB.puffs.length + 1;
 		fakeDB.puffs.push(puff);
 		callAfterUpdate();
 	},
@@ -29,30 +29,45 @@ var realRepository = {
 		});
 	},
 	createPuff : function(puff, callAfterUpdate) {
+		var successCallback = function(newPuffId) {
+			console.log('create success ',newPuffId);
+			callAfterUpdate(newPuffId.id);
+		};
 		$.ajax({
-			type : "POST",
-			url : "cloudservlet?action=create",
-			contentType : 'application/json',
-			data : JSON.stringify(puff, callAfterUpdate),
-			success : function(responseData) {
-					console.log('response to create', responseData);
-					callAfterUpdate();
+			type : 'POST',
+			url : 'cloudservlet?action=create',
+			contentType : 'application/json; charset=utf-8',
+			dataType : 'json',
+			data : JSON.stringify(puff),
+			success : successCallback,
+			failure : function(data) {
+				console.log('failure',data);
+			},
+			error : function(request, status, error) {
+				console.log("something went wrong \nrequest.responseText : " + request.responseText + "\nstatus: "+status+"\nerror:"+error);
 			}
 		});
 	},
-	updatePuff : function(puff) {
+	updatePuff : function(puff, callAfterUpdate) {
+		var successCallback = function(responseData) {
+			callAfterUpdate();
+		};
 		$.ajax({
-			type : "POST",
-			url : "cloudservlet?action=update",
-			contentType : 'application/json',
+			type : 'POST',
+			url : 'cloudservlet?action=update',
+			contentType : 'application/json; charset=utf-8',
+			dataType : 'json',
 			data : JSON.stringify(puff),
-			success : function(responseData) {
-					console.log('response to create', responseData);
-					callAfterUpdate();
+			success : successCallback,
+			failure : function(data) {
+				console.log('failure',data);
+			},
+			error : function(request, status, error) {
+				console.log("something went wrong \nrequest.responseText : " + request.responseText + "\nstatus: "+status+"\nerror:"+error);
 			}
 		});
 	}
 };
 
-var repository = fakeRepository;
-//var repository = realRepository;
+// var repository = fakeRepository;
+var repository = realRepository;

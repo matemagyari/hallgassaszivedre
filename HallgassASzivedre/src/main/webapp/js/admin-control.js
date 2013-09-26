@@ -44,8 +44,13 @@ var formControl = {
 	createPuff : function(callAfterUpdate) {
 
 		this.copyFormToSelectedPuff(this.getPuffFromForm());
+		
+		var extendedCallAfterUpdate = function(id) {
+			selectedPuff.id = id;
+			callAfterUpdate();
+		};
 
-		repository.createPuff(selectedPuff, callAfterUpdate);
+		repository.createPuff(selectedPuff, extendedCallAfterUpdate);
 	},
 	
 	copyFormToSelectedPuff : function(puff) {

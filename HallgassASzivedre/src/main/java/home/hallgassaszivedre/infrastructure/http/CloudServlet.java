@@ -30,7 +30,7 @@ public class CloudServlet implements HttpRequestHandler {
 	public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String json = "ok";
+		String json = "{ \"status\" : 0 }";
 		resp.setContentType("text/json");
 
 		UIAction uiAction = UIAction.valueOf(req.getParameter("action"));
@@ -42,14 +42,18 @@ public class CloudServlet implements HttpRequestHandler {
 			} else if (UIAction.create == uiAction) {
 				Puff puff = dataConverter.fromJSON(getPostBody(req));
 				cloudAppService.createPuff(puff);
+				json = String.format("{ \"id\" : %d }", puff.getId());
 			} else if (UIAction.update == uiAction) {
 				Puff puff = dataConverter.fromJSON(getPostBody(req));
 				cloudAppService.updatePuff(puff);
 			}
+			resp.setStatus(200);
 		} catch (Exception ex) {
+		    resp.setStatus(500);
 			json = ex.getMessage();
 		}
 
+		
 		resp.getWriter().println(json);
 	}
 

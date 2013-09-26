@@ -3,13 +3,16 @@ package home.hallgassaszivedre.infrastructure.acl;
 import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.infrastructure.dto.PuffDTO;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.json.JSONArray;
 import org.springframework.stereotype.Component;
+
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 @Component
 public class DataConverter {
@@ -30,17 +33,17 @@ public class DataConverter {
         return fromDTO(objectSerializer.getObject(json, PuffDTO.class));
     }
     
-	private Puff fromDTO(PuffDTO dto) {
+	public Puff fromDTO(PuffDTO dto) {
 		Puff puff = new Puff();
-		dto.setId(dto.getId());
-		dto.setDate(dto.getDate());
-		dto.setPhrase(dto.getPhrase());
-		dto.setWeight(dto.getWeight());
-		dto.setContent(dto.getContent());
+		puff.setId(dto.getId());
+		puff.setDate(dto.getDate());
+		puff.setPhrase(dto.getPhrase());
+		puff.setWeight(dto.getWeight());
+		puff.setContent(dto.getContent());
 		return puff;
 	}
 
-	private Serializable toDTO(Puff puff) {
+	public PuffDTO toDTO(Puff puff) {
 		PuffDTO dto = new PuffDTO();
 		dto.setId(puff.getId());
 		dto.setDate(puff.getDate());
@@ -49,6 +52,16 @@ public class DataConverter {
 		dto.setContent(puff.getContent());
 		return dto;
 	}
+
+    public List<Puff> fromDTO(List<PuffDTO> dtos) {
+        Function<PuffDTO, Puff> transformer = new Function<PuffDTO, Puff>() {
+            @Override
+            public Puff apply(PuffDTO dto) {
+                return fromDTO(dto);
+            }
+        };
+        return Lists.newArrayList(Iterables.transform(dtos, transformer));
+    }
     
 
 }

@@ -13,6 +13,13 @@ function windowOnload() {
 
 function adminWindowOnload() {
 	
+	var keypressFunction = function () { 
+		var currentWidth = $('#phraseInput').val().length;
+		var width =	Math.min(currentWidth,10);
+		$('#phraseInput').css('width', width * 7); 
+	};
+	$('#phraseInput').on('keypress', keypressFunction);
+	
 	var callbackAfterDataArrived = function(data) {
 		tagCanvasConverter.convertCloudToDOMElements(data, 'puffListContainer');
 	};

@@ -1,44 +1,44 @@
 package home.hallgassaszivedre.infrastructure.persistence;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
 import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.domain.model.PuffRepository;
+import home.hallgassaszivedre.infrastructure.acl.DataConverter;
+import home.hallgassaszivedre.infrastructure.dto.PuffDTO;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.springframework.stereotype.Component;
+import javax.annotation.Resource;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
-import com.google.appengine.repackaged.com.google.common.collect.Maps;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 
-@Component
+//@Component
 public class ObjectifyPuffRepository implements PuffRepository {
 	
-	private final Map<Integer, Puff> map = Maps.newHashMap();
-	private final AtomicInteger idGenerator = new AtomicInteger(1);
-	private Objectify ofy;
+	@Resource
+	private DataConverter dataConverter;
 
-	private void init() {
-		ofy = ObjectifyService.ofy();
-	}
-	
+	public ObjectifyPuffRepository() {
+	    ObjectifyService.register(PuffDTO.class);
+    }
+
 	@Override
 	public List<Puff> findAll() {
-		return null;
+	    List<PuffDTO> puffs = ofy().load().type(PuffDTO.class).list();
+		return dataConverter.fromDTO(puffs);
 	}
 
     @Override
     public void create(Puff puff) {
-    	Key<Puff> key = ofy.save().entity(puff).now();
+        PuffDTO dto = dataConverter.toDTO(puff);
+    	Key<PuffDTO> key = ofy().save().entity(dto).now();
     }
 
     @Override
     public void update(Puff puff) {
-        map.put(puff.getId(), puff);
+        PuffDTO dto = dataConverter.toDTO(puff);
+        Key<PuffDTO> key = ofy().save().entity(dto).now();
     }
 
 }

@@ -33,9 +33,9 @@ tinymce.init({
 </script>
 <body>
 	<h1>Hallgass a szivedre! Admin</h1>
-	<div id="container" style="height: 1000px; width: 1200px; float: left;">
-		<div id="puffListContainer" style="height: 100%; width: 300px; float: left;"></div>
-		<div id="editContainer" style="height: height:100%; width: 900px; float: left;">
+	<div id="container" style="height: 100%; width: 100%; float: left;">
+		<div id="puffListContainer" style="height: 100%; width: 300px; float: left; border: thick solid #000000"></div>
+		<div id="editContainer" style="height: height:100%; width: 900px; float: left; border: thick solid #000000">
 			<table>
 				<tr>
 					<td><input type="button" value="Ment ujkent" onclick="createPuff()" /></td>
@@ -48,14 +48,11 @@ tinymce.init({
 				<tr>
 					<td>Jelentoseg</td>
 					<td><input id="weightInput" type="number" style="width: 50px"/></td>
-				</tr>
-				<tr>
 					<td>Datum</td>
 					<td><input id="dateInput" type="date" /></td>
 				</tr>
 				<tr>
-					<td>Tartalom</td>
-					<td><textarea name="content" style="height: 100%;width: 100%"></textarea></td>
+					<td colspan="2"><textarea name="content" style="height:500px;width: 100%"></textarea></td>
 				</tr>
 			</table>
 		</div>
