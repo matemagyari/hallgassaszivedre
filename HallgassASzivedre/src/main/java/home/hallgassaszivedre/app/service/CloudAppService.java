@@ -5,13 +5,13 @@ import home.hallgassaszivedre.domain.model.PuffRepository;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-@Component
+@Named
 public class CloudAppService {
 	
-    @Autowired
+    @Inject
     public PuffRepository puffRepository;
     
 	public List<Puff> getPuffs() {
@@ -24,6 +24,10 @@ public class CloudAppService {
 	
 	public void updatePuff(Puff puff) {
 	    puffRepository.update(puff);
+	}
+
+	public void deletePuff(Long puffId) {
+		puffRepository.remove(puffId);
 	}
 
 }

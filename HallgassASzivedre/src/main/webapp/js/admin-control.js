@@ -3,10 +3,8 @@
 
 var formControl = {
 
-	selectedPuff : {},
-
 	filloutForm : function(puff) {
-		$('#phraseInput').css('width', puff.phrase.length * 7);
+		$('#phraseInput').css('width', puff.phrase.length * 10);
 		$('#phraseInput').val(puff.phrase);
 		$('#weightInput').val(puff.weight);
 		$('#dateInput').val(puff.date);
@@ -29,34 +27,30 @@ var formControl = {
 
 	clickOnPuff : function(puff) {
 
-		selectedPuff = puff;
+		selectedPuffId = puff.id;
 		this.filloutForm(puff);
 	},
 
 	updatePuff : function(callAfterUpdate) {
 
 		var puff = this.getPuffFromForm();
-		puff.id = selectedPuff.id;
-		this.copyFormToSelectedPuff(puff);
+		puff.id = selectedPuffId;
 		repository.updatePuff(puff, callAfterUpdate);
+	},
+	
+	deletePuff : function(callAfterUpdate) {
+
+		repository.deletePuff(selectedPuffId, callAfterUpdate);
 	},
 
 	createPuff : function(callAfterUpdate) {
 
-		this.copyFormToSelectedPuff(this.getPuffFromForm());
-		
+		selectedPuffId = null;
 		var extendedCallAfterUpdate = function(id) {
-			selectedPuff.id = id;
+			selectedPuffId = id;
 			callAfterUpdate();
 		};
 
-		repository.createPuff(selectedPuff, extendedCallAfterUpdate);
-	},
-	
-	copyFormToSelectedPuff : function(puff) {
-		selectedPuff.phrase = puff.phrase;
-		selectedPuff.weight = puff.weight;
-		selectedPuff.date = puff.date;
-		selectedPuff.content = puff.content;		
+		repository.createPuff(this.getPuffFromForm(), extendedCallAfterUpdate);
 	}
 };

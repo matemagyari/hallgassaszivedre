@@ -21,7 +21,7 @@ var fakeDB = {
 						weight : 15,
 						date : "01-01-2013"
 					},
-					{
+/*					{
 						id : 4,
 						phrase : "Tandij",
 						content : "Ide kerulnek a Tandijjal kapcsolatos irasok.",
@@ -48,5 +48,6 @@ var fakeDB = {
 						content : "Ide kerulnek a Balas gyilkossal kapcsolatos irasok.",
 						weight : 15,
 						date : "01-01-2012"
-					} ]
+					} */
+					]
 };

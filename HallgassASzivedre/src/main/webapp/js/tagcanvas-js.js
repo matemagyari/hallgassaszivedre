@@ -15,8 +15,8 @@ function adminWindowOnload() {
 	
 	var keypressFunction = function () { 
 		var currentWidth = $('#phraseInput').val().length;
-		var width =	Math.min(currentWidth,10);
-		$('#phraseInput').css('width', width * 7); 
+		var width =	Math.max(currentWidth,10);
+		$('#phraseInput').css('width', width * 10); 
 	};
 	$('#phraseInput').on('keypress', keypressFunction);
 	
@@ -38,6 +38,17 @@ function createPuff() {
 		adminWindowOnload();
 	};
 	formControl.createPuff(callAfterUpdate);
+};
+function deletePuff() {
+	var callAfterUpdate = function() {
+		var callbackAfterDataArrived = function(data) {
+			console.log('delete puff after', data);
+			tagCanvasConverter.convertCloudToDOMElements(data, 'puffListContainer');
+			if (data.length > 0) { formControl.clickOnPuff(data[0]); }
+		};
+		repository.getData(callbackAfterDataArrived);
+	};
+	formControl.deletePuff(callAfterUpdate);
 };
 
 function startTagCanvas() {
