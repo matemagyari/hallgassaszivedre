@@ -4,13 +4,13 @@ import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.domain.model.PuffRepository;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 @Lazy(false)
-@Component
+@Named
 public class Bootstrapper {
 
     @Autowired

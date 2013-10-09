@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
 
-@Component("cloudServlet")
+@Named
 public class CloudServlet implements HttpRequestHandler {
 
 	@Autowired
