@@ -9,5 +9,9 @@ public interface PuffRepository {
     void update(Puff puff);
 
     void create(Puff puff);
+    
+    boolean isEmpty();
+
+	void remove(Long puffId);
 
 }

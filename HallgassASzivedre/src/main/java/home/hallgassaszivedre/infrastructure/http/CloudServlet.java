@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,15 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONObject;
 import org.springframework.web.HttpRequestHandler;
 
-@Named
+
+@Named("cloudServlet")
 public class CloudServlet implements HttpRequestHandler {
 
-	@Autowired
+	@Inject
 	private CloudAppService cloudAppService;
-	@Autowired
+	@Inject
 	private DataConverter dataConverter;
 
 	@Override
@@ -46,14 +48,17 @@ public class CloudServlet implements HttpRequestHandler {
 			} else if (UIAction.update == uiAction) {
 				Puff puff = dataConverter.fromJSON(getPostBody(req));
 				cloudAppService.updatePuff(puff);
+			} else if (UIAction.delete == uiAction) {
+				String body = getPostBody(req);
+				JSONObject jsonObject = new JSONObject(body);
+				cloudAppService.deletePuff(jsonObject.getLong("id"));
 			}
 			resp.setStatus(200);
 		} catch (Exception ex) {
-		    resp.setStatus(500);
+			resp.setStatus(500);
 			json = ex.getMessage();
 		}
 
-		
 		resp.getWriter().println(json);
 	}
 

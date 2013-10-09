@@ -5,19 +5,20 @@ import home.hallgassaszivedre.infrastructure.dto.PuffDTO;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.json.JSONArray;
-import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-@Component
+@Named
 public class DataConverter {
     
-    @Resource
+    @Inject
     private ObjectSerializer objectSerializer;
 
     public String toJSON(List<Puff> puffs) {
@@ -54,6 +55,9 @@ public class DataConverter {
 	}
 
     public List<Puff> fromDTO(List<PuffDTO> dtos) {
+    	if (CollectionUtils.isEmpty(dtos)) {
+    		return Lists.newArrayList();
+    	}
         Function<PuffDTO, Puff> transformer = new Function<PuffDTO, Puff>() {
             @Override
             public Puff apply(PuffDTO dto) {

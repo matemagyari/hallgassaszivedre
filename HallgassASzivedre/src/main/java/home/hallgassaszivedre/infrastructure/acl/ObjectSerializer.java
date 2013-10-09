@@ -3,17 +3,14 @@ package home.hallgassaszivedre.infrastructure.acl;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.annotation.Resource;
+import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.springframework.stereotype.Component;
 
-@Component
+@Named
 public class ObjectSerializer {
 
     private ObjectMapper mapper;
