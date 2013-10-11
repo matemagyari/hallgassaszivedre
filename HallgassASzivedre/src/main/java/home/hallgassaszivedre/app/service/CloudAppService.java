@@ -1,7 +1,9 @@
 package home.hallgassaszivedre.app.service;
 
+import home.hallgassaszivedre.app.bootstrapper.Bootstrapper;
 import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.domain.model.PuffRepository;
+import home.hallgassaszivedre.infrastructure.persistence.StoreBasedPuffRepository;
 
 import java.util.List;
 
@@ -10,7 +12,10 @@ import javax.inject.Named;
 
 @Named
 public class CloudAppService {
-	
+  //TODO test
+	StoreBasedPuffRepository basedPuffRepository;
+	//TODO test
+	Bootstrapper a;
     @Inject
     public PuffRepository puffRepository;
     

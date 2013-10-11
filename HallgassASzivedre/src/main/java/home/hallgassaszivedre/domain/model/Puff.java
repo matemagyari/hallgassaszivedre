@@ -7,7 +7,8 @@ public class Puff {
 	private String content;
 	private String date;
 	private int weight;
-
+	//TODO test
+	home.hallgassaszivedre.infrastructure.http.UIAction action;
 	public Long getId() {
 		return id;
 	}

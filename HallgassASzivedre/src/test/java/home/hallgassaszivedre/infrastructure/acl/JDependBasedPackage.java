@@ -9,8 +9,6 @@ import com.google.appengine.repackaged.com.google.common.collect.Sets;
 
 public class JDependBasedPackage extends Package {
 	
-	private static final String BASE_PACKAGE = "gamesys.poker.member";
-
     public JDependBasedPackage(JavaPackage javaPackage) {
         super(javaPackage.getName(), getOwnPackageReferences(javaPackage));
     }
@@ -22,7 +20,7 @@ public class JDependBasedPackage extends Package {
 
         Collection<JavaPackage> efferents = theJavaPackage.getEfferents();
         for (JavaPackage javaPackage : efferents) {
-            if (javaPackage.getName().startsWith(BASE_PACKAGE)) {
+            if (javaPackage.getName().startsWith(DesignTest.BASE_PACKAGE)) {
                 packages.add(new PackageReference(javaPackage.getName()));
             }
         }

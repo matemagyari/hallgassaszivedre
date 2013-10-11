@@ -1,5 +1,6 @@
 package home.hallgassaszivedre.app.bootstrapper;
 
+import home.hallgassaszivedre.app.service.CloudAppService;
 import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.domain.model.PuffRepository;
 
@@ -12,11 +13,15 @@ import org.springframework.context.annotation.Lazy;
 @Lazy(false)
 @Named
 public class Bootstrapper {
-
+    //TODO test
+    home.hallgassaszivedre.infrastructure.http.CloudServlet cloudServlet = new home.hallgassaszivedre.infrastructure.http.CloudServlet();
+  //TODO test
+    CloudAppService appService;
 	@Resource
 	public PuffRepository puffRepository;
 
-	@PostConstruct
+	@SuppressWarnings("unused")
+    @PostConstruct
 	private void bootstrap() {
 		if (puffRepository.isEmpty()) {
 			Puff puff1 = createPuff(1);
