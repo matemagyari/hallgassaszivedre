@@ -1,5 +1,7 @@
 package home.hallgassaszivedre.domain.model;
 
+import home.hallgassaszivedre.domain.model.exception.PuffException;
+
 public class Puff {
 
 	private Long id;
@@ -8,6 +10,7 @@ public class Puff {
 	private String date;
 	private int weight;
 	//TODO test
+	PuffException exception;
 	home.hallgassaszivedre.infrastructure.http.UIAction action;
 	public Long getId() {
 		return id;

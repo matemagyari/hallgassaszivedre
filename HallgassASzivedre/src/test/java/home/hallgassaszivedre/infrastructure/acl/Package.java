@@ -26,25 +26,31 @@ public class Package {
     }
 
     void insert(Package aPackage) {
-        if (!aPackage.name.startsWith(this.name+".")) {
+        if (notUnderActual(aPackage)) {
             throw new RuntimeException(aPackage + " is not under " + this);
         }
         if (isLeafPackage(aPackage)) {
             children.add(aPackage);
         } else {
-            String subName = aPackage.name.replaceFirst(this.name + ".", "");
-            String[] split = subName.split("\\.", 2);
-            Package subPackage = getChild(split[0]);
-            if (subPackage == null) {
-                Package directChild = new Package(this.name + "." + split[0]);
+            String relativeName = aPackage.name.replaceFirst(this.name + ".", "");
+            String relativeNameOfDirectChild = relativeName.split("\\.", 2)[0];
+			Package directChild = getChild(relativeNameOfDirectChild);
+            if (directChild == null) {
+                directChild = new Package(this.name + "." + relativeNameOfDirectChild);
                 children.add(directChild);
-                directChild.insert(aPackage);
-            } else {
-                subPackage.insert(aPackage);
             }
+            directChild.insert(aPackage);
         }
 
     }
+
+    private boolean isLeafPackage(Package aPackage) {
+        String subName = aPackage.name.replaceFirst(this.name + ".", "");
+        return !subName.contains(".");
+    }
+	private boolean notUnderActual(Package aPackage) {
+		return !aPackage.name.startsWith(this.name+".");
+	}
 
     Set<Cycle> detectCyclesBelow() {
 
@@ -64,6 +70,7 @@ public class Package {
         for (Package child : children) {
             List<Package> siblings = Lists.newArrayList(children);
             siblings.remove(child);
+            //siblings.add(this);
 
             for (Package sibling : siblings) {
                 if (sibling.referredByEachOther(child)) {
@@ -73,6 +80,13 @@ public class Package {
         }
         return cyclesAmongChildren;
     }
+    
+
+	public List<GCycle> detectCycles(List<Package> mySiblings) {
+		Set<PackageReference> packageReferences = this.getPackageReferences();
+		
+		return null;
+	}
 
     private Set<PackageReference> getPackageReferences() {
         Set<PackageReference> packageReferences = Sets.newHashSet();
@@ -111,11 +125,6 @@ public class Package {
         return null;
     }
 
-    private boolean isLeafPackage(Package aPackage) {
-        String subName = aPackage.name.replaceFirst(this.name + ".", "");
-        return !subName.contains(".");
-    }
-
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Package)) {
@@ -134,4 +143,5 @@ public class Package {
     public String toString() {
         return this.name;
     }
+
 }
