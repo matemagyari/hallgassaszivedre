@@ -29,8 +29,27 @@ public class Package {
 	private PackageReference getReference() {
 		return new PackageReference(name);
 	}
+	
+	private Package find(PackageReference reference) {
+		if (this.getReference().equals(reference)) {
+			return this;
+		}
+		if (notUnderMe(reference)) {
+			return null;
+		}
+		for (Package child : children) {
+			Package foundPackage = child.find(reference);
+			if (foundPackage != null) {
+				return foundPackage;
+			}
+		}
+		return null;
+	}
 
 	void insert(Package aPackage) {
+		if (this.equals(aPackage)) {
+			throw new RuntimeException("Attempted to insert into itself " + this);
+		}
 		if (notUnderMe(aPackage)) {
 			throw new RuntimeException(aPackage + " is not under " + this);
 		}
@@ -65,6 +84,9 @@ public class Package {
 	private boolean notUnderMe(Package aPackage) {
 		return !aPackage.name.startsWith(this.name + ".");
 	}
+	private boolean notUnderMe(PackageReference reference) {
+		return !reference.startsWith(this.name + ".");
+	}	
 
 	Set<Cycle> detectCyclesBelow() {
 
