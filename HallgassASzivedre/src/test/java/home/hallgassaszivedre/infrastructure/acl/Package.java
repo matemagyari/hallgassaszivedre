@@ -26,10 +26,10 @@ public class Package {
 		this(name, new HashSet<PackageReference>());
 	}
 
-	private PackageReference getReference() {
+	protected PackageReference getReference() {
 		return new PackageReference(name);
 	}
-	
+
 	private Package find(PackageReference reference) {
 		if (this.getReference().equals(reference)) {
 			return this;
@@ -84,9 +84,10 @@ public class Package {
 	private boolean notUnderMe(Package aPackage) {
 		return !aPackage.name.startsWith(this.name + ".");
 	}
+
 	private boolean notUnderMe(PackageReference reference) {
 		return !reference.startsWith(this.name + ".");
-	}	
+	}
 
 	Set<Cycle> detectCyclesBelow() {
 
@@ -94,7 +95,7 @@ public class Package {
 
 		for (Package child : children) {
 			cycles.addAll(child.detectCyclesBelow());
-			
+
 			if (child.explicitlyRefersTo(this) && this.explicitlyRefersTo(child)) {
 				cycles.add(new Cycle(this.getReference(), child.getReference()));
 			}
@@ -107,7 +108,7 @@ public class Package {
 	private Set<Cycle> detectCyclesBetweenChildren() {
 		Set<Cycle> cyclesAmongChildren = Sets.newHashSet();
 		for (Package child : children) {
-			
+
 			List<Cycle> cycles = child.detectCycles(children, new ArrayList<PackageReference>(), new ArrayList<Cycle>());
 			cyclesAmongChildren.addAll(cycles);
 		}
@@ -135,6 +136,27 @@ public class Package {
 		return foundCycles;
 	}
 
+	List<Cycle> detectCycles(List<PackageReference> traversedPackages, List<Cycle> foundCycles) {
+
+		System.err.println("detect cycles: " + this);
+		if (traversedPackages.contains(this.getReference())) {
+			foundCycles.add(new Cycle(traversedPackages));
+
+			return foundCycles;
+		}
+		for (PackageReference referencedPackageRef : this.accumulatedPackageReferences()) {
+
+			List<PackageReference> updatedTraversedPackages = Lists.newArrayList(traversedPackages);
+			updatedTraversedPackages.add(this.getReference());
+
+			Package referencedPackage = DesignTest.BASE_PACKAGE_.find(referencedPackageRef);
+			List<Cycle> cycles = referencedPackage.detectCycles(updatedTraversedPackages, foundCycles);
+			foundCycles.addAll(cycles);
+		}
+
+		return foundCycles;
+	}
+
 	private boolean refersTo(Package aPackage) {
 		if (this.equals(aPackage)) {
 			return false;
@@ -152,20 +174,25 @@ public class Package {
 		return reference.startsWith(name);
 	}
 
+	private boolean pointsToMe(PackageReference reference) {
+		return reference.equals(this.getReference());
+	}
+
 	private boolean explicitlyRefersTo(Package aPackage) {
-		for (PackageReference reference : this.ownPackageReferences) {
-			if (reference.equals(aPackage.getReference())) {	
+		for (PackageReference reference : this.getOwnPackageReferences()) {
+			if (aPackage.pointsToMe(reference)) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public Set<PackageReference> accumulatedPackageReferences() {
 		Set<PackageReference> packageReferences = Sets.newHashSet();
 		for (Package child : children) {
 			packageReferences.addAll(child.accumulatedPackageReferences());
 		}
-		packageReferences.addAll(ownPackageReferences);
+		packageReferences.addAll(getOwnPackageReferences());
 
 		return packageReferences;
 	}
@@ -178,16 +205,20 @@ public class Package {
 		}
 		return null;
 	}
-	
+
 	List<Package> flatten() {
 		List<Package> flattenedHierarchy = Lists.newArrayList();
 		flattenedHierarchy = Lists.newArrayList(this);
-		
+
 		for (Package child : children) {
 			flattenedHierarchy.addAll(child.flatten());
-			
+
 		}
 		return flattenedHierarchy;
+	}
+
+	protected Set<PackageReference> getOwnPackageReferences() {
+		return ownPackageReferences;
 	}
 
 	@Override

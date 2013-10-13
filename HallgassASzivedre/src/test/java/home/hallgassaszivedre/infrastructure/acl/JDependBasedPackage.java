@@ -9,12 +9,20 @@ import com.google.appengine.repackaged.com.google.common.collect.Sets;
 
 public class JDependBasedPackage extends Package {
 	
-    public JDependBasedPackage(JavaPackage javaPackage) {
-        super(javaPackage.getName(), getOwnPackageReferences(javaPackage));
+    private Set<PackageReference> ownPackageReferences;
+
+	public JDependBasedPackage(JavaPackage javaPackage) {
+        super(javaPackage.getName());
+        this.ownPackageReferences =  createOwnPackageReferences(javaPackage);
     }
+	
+	@Override
+	protected Set<PackageReference> getOwnPackageReferences() {
+		return ownPackageReferences;
+	}
 
     @SuppressWarnings("unchecked")
-    private static Set<PackageReference> getOwnPackageReferences(JavaPackage theJavaPackage) {
+    protected static Set<PackageReference> createOwnPackageReferences(JavaPackage theJavaPackage) {
 
         Set<PackageReference> packages = Sets.newHashSet();
 

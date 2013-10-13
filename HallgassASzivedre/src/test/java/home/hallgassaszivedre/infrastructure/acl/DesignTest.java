@@ -1,26 +1,25 @@
 package home.hallgassaszivedre.infrastructure.acl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import jdepend.framework.JDepend;
 import jdepend.framework.JavaPackage;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.appengine.labs.repackaged.com.google.common.base.Predicate;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.repackaged.com.google.common.collect.Sets;
 
 public class DesignTest {
     
     static final String BASE_PACKAGE = "home.hallgassaszivedre";
+    
+    
+    static Package BASE_PACKAGE_;
 
     
     @SuppressWarnings("unchecked")
@@ -33,17 +32,11 @@ public class DesignTest {
         jDepend.addPackage(BASE_PACKAGE);
         Collection<JavaPackage> packages = jDepend.analyze();
         
-        List<JavaPackage> sortedPackages = sortByName(packages);
-       
-        JavaPackage baseJavaPackage =  sortedPackages.remove(0);
-        
-        Package basePackage = new JDependBasedPackage(baseJavaPackage);
-        
-        for (JavaPackage javaPackage : sortedPackages) {
-            basePackage.insert(new JDependBasedPackage(javaPackage));
-        }
-        
+        PackageStructureBuilder packageStructureBuilder = new PackageStructureBuilder(BASE_PACKAGE);
+        Package basePackage = packageStructureBuilder.build(packages);
         // assert
+        BASE_PACKAGE_ = basePackage;
+        
         
         Set<Cycle> checkCycles = basePackage.detectCyclesBelow();
         for (Cycle cycle : checkCycles) {
@@ -58,38 +51,18 @@ public class DesignTest {
 		
 		for (Package aPackage : flatten) {
 			Set<Cycle> aCycles = aPackage.detectCyclesBelow();
-			System.err.println("\nCycles under " + aPackage + " " + aCycles.size());
+			System.err.println("Cycles under " + aPackage + " " + aCycles.size());
 			for (Cycle cycle : aCycles) {
 				System.err.println(cycle);
 			}
 			allCycles.addAll(aCycles);
 		}
-		System.err.println(allCycles.size());
-        
+		
+		//List<Cycle> detectCycles = basePackage.detectCycles(new ArrayList<PackageReference>(), new ArrayList<Cycle>());
+		//System.err.println(detectCycles);
     }
 
 
-    private List<JavaPackage> sortByName(Collection<JavaPackage> packages) {
-        Comparator<JavaPackage> comparator = new Comparator<JavaPackage>() {
 
-            @Override
-            public int compare(JavaPackage p1, JavaPackage p2) {
-                return p1.getName().compareTo(p2.getName());
-            }};
-        // act
-        List<JavaPackage> sortedPackages = Lists.newArrayList(packages);
-        Collections.sort(sortedPackages, comparator);
-        
-        
-        
-        Predicate<JavaPackage> filter = new Predicate<JavaPackage>() {
-            
-            @Override
-            public boolean apply(JavaPackage input) {
-                return input.getName().startsWith(BASE_PACKAGE);
-            }
-        };
-        return Lists.newArrayList(Iterables.filter(sortedPackages, filter));
-    }
 
 }
