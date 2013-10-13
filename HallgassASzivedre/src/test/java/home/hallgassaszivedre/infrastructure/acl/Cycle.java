@@ -1,22 +1,33 @@
 package home.hallgassaszivedre.infrastructure.acl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class Cycle {
     
-    private final Package packageA;
-    private final Package packageB;
+    private final List<PackageReference> references;
     
-    public Cycle(Package packageA, Package packageB) {
-        this.packageA = packageA;
-        this.packageB = packageB;
+    public Cycle(List<PackageReference> references) {
+        this.references = Lists.newArrayList(references);
+        Collections.sort(this.references);
     }
-
+    public Cycle(PackageReference... references) {
+        this(Lists.newArrayList(references));
+    }
+    
     @Override
     public String toString() {
-        return packageA + "<-->" + packageB;
+    	String arrow = "-->";
+    	StringBuffer sb = new StringBuffer();
+    	for (PackageReference reference : references) {
+			sb.append(reference + arrow);
+		}
+        return sb.append("(beginning)"). toString();
     }
     
     @Override
@@ -26,14 +37,25 @@ public class Cycle {
         }
         Cycle castOther = (Cycle) other;
         
-        return Sets.newHashSet(packageA, packageB).equals(Sets.newHashSet(castOther.packageA, castOther.packageB));
+        if (!Sets.newHashSet(references).equals(Sets.newHashSet(castOther.references))) {
+        	return false;
+        }
+        
+        int offset = castOther.references.indexOf(references.get(0));
+        for (int i = 0; i < references.size(); i++) {
+			int indexWithOffset = (i + offset) % references.size();
+			if (!references.get(i).equals(castOther.references.get(indexWithOffset))) {
+				return false;
+			}
+		}
+        
+        return true;
     }
 
     @Override
     public int hashCode() {
-        String hash = packageA.toString()+"_"+packageB.toString();
         return new HashCodeBuilder()
-                        .append(hash.length())
+                        .append(references.size())
                         .hashCode();
     }
 

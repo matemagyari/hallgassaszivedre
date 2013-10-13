@@ -1,5 +1,6 @@
 package home.hallgassaszivedre.infrastructure.acl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,136 +13,174 @@ import com.google.appengine.repackaged.com.google.common.collect.Sets;
 
 public class Package {
 
-    private final List<Package> children = Lists.newArrayList();
-    private final Set<PackageReference> ownPackageReferences = Sets.newHashSet();
-    private final String name;
+	private final List<Package> children = Lists.newArrayList();
+	private final Set<PackageReference> ownPackageReferences;
+	private final String name;
 
-    public Package(String name, Set<PackageReference> packageReferences) {
-        this.name = name;
-        this.ownPackageReferences.addAll(packageReferences);
-    }
-
-    public Package(String name) {
-        this(name, new HashSet<PackageReference>());
-    }
-
-    void insert(Package aPackage) {
-        if (notUnderActual(aPackage)) {
-            throw new RuntimeException(aPackage + " is not under " + this);
-        }
-        if (isLeafPackage(aPackage)) {
-            children.add(aPackage);
-        } else {
-            String relativeName = aPackage.name.replaceFirst(this.name + ".", "");
-            String relativeNameOfDirectChild = relativeName.split("\\.", 2)[0];
-			Package directChild = getChild(relativeNameOfDirectChild);
-            if (directChild == null) {
-                directChild = new Package(this.name + "." + relativeNameOfDirectChild);
-                children.add(directChild);
-            }
-            directChild.insert(aPackage);
-        }
-
-    }
-
-    private boolean isLeafPackage(Package aPackage) {
-        String subName = aPackage.name.replaceFirst(this.name + ".", "");
-        return !subName.contains(".");
-    }
-	private boolean notUnderActual(Package aPackage) {
-		return !aPackage.name.startsWith(this.name+".");
+	public Package(String name, Set<PackageReference> packageReferences) {
+		this.name = name;
+		this.ownPackageReferences = Sets.newHashSet((packageReferences));
 	}
 
-    Set<Cycle> detectCyclesBelow() {
+	public Package(String name) {
+		this(name, new HashSet<PackageReference>());
+	}
 
-        Set<Cycle> cycles = Sets.newHashSet();
+	private PackageReference getReference() {
+		return new PackageReference(name);
+	}
 
-        for (Package child : children) {
-            cycles.addAll(child.detectCyclesBelow());
-        }
+	void insert(Package aPackage) {
+		if (notUnderMe(aPackage)) {
+			throw new RuntimeException(aPackage + " is not under " + this);
+		}
+		if (isDirectChildOfMe(aPackage)) {
+			children.add(aPackage);
+		} else {
+			insertIndirectChild(aPackage);
+		}
 
-        Set<Cycle> cyclesBetweenChildren = detectCyclesBetweenChildren();
-        cycles.addAll(cyclesBetweenChildren);
-        return cycles;
-    }
+	}
 
-    private Set<Cycle> detectCyclesBetweenChildren() {
-        Set<Cycle> cyclesAmongChildren = Sets.newHashSet();
-        for (Package child : children) {
-            List<Package> siblings = Lists.newArrayList(children);
-            siblings.remove(child);
-            //siblings.add(this);
+	private void insertIndirectChild(Package aPackage) {
+		String relativeNameOfDirectChild = aPackage.firstPartOfRelativeNameTo(this);
+		Package directChild = getChild(relativeNameOfDirectChild);
+		if (directChild == null) {
+			directChild = new Package(this.name + "." + relativeNameOfDirectChild);
+			children.add(directChild);
+		}
+		directChild.insert(aPackage);
+	}
 
-            for (Package sibling : siblings) {
-                if (sibling.referredByEachOther(child)) {
-                    cyclesAmongChildren.add(new Cycle(child, sibling));
-                }
-            }
-        }
-        return cyclesAmongChildren;
-    }
-    
+	private String firstPartOfRelativeNameTo(Package parentPackage) {
+		String relativeName = this.name.replaceFirst(parentPackage.name + ".", "");
+		return relativeName.split("\\.", 2)[0];
+	}
 
-	public List<GCycle> detectCycles(List<Package> mySiblings) {
-		Set<PackageReference> packageReferences = this.getPackageReferences();
-		
+	private boolean isDirectChildOfMe(Package aPackage) {
+		String subName = aPackage.name.replaceFirst(this.name + ".", "");
+		return !subName.contains(".");
+	}
+
+	private boolean notUnderMe(Package aPackage) {
+		return !aPackage.name.startsWith(this.name + ".");
+	}
+
+	Set<Cycle> detectCyclesBelow() {
+
+		Set<Cycle> cycles = Sets.newHashSet();
+
+		for (Package child : children) {
+			cycles.addAll(child.detectCyclesBelow());
+			
+			if (child.explicitlyRefersTo(this) && this.explicitlyRefersTo(child)) {
+				cycles.add(new Cycle(this.getReference(), child.getReference()));
+			}
+		}
+
+		cycles.addAll(detectCyclesBetweenChildren());
+		return cycles;
+	}
+
+	private Set<Cycle> detectCyclesBetweenChildren() {
+		Set<Cycle> cyclesAmongChildren = Sets.newHashSet();
+		for (Package child : children) {
+			
+			List<Cycle> cycles = child.detectCycles(children, new ArrayList<PackageReference>(), new ArrayList<Cycle>());
+			cyclesAmongChildren.addAll(cycles);
+		}
+		return cyclesAmongChildren;
+	}
+
+	private List<Cycle> detectCycles(List<Package> relevantPackages, List<PackageReference> traversedPackages, List<Cycle> foundCycles) {
+
+		if (traversedPackages.contains(this.getReference())) {
+			foundCycles.add(new Cycle(traversedPackages));
+
+			return foundCycles;
+		}
+		for (Package relevantPackage : relevantPackages) {
+			if (this.refersTo(relevantPackage)) {
+
+				List<PackageReference> updatedTraversedPackages = Lists.newArrayList(traversedPackages);
+				updatedTraversedPackages.add(this.getReference());
+
+				List<Cycle> cycles = relevantPackage.detectCycles(relevantPackages, updatedTraversedPackages, foundCycles);
+				foundCycles.addAll(cycles);
+			}
+		}
+
+		return foundCycles;
+	}
+
+	private boolean refersTo(Package aPackage) {
+		if (this.equals(aPackage)) {
+			return false;
+		}
+
+		for (PackageReference reference : this.accumulatedPackageReferences()) {
+			if (reference.startsWith(aPackage.name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean explicitlyRefersTo(Package aPackage) {
+		for (PackageReference reference : this.ownPackageReferences) {
+			if (reference.equals(aPackage.getReference())) {	
+				return true;
+			}
+		}
+		return false;
+	}
+	public Set<PackageReference> accumulatedPackageReferences() {
+		Set<PackageReference> packageReferences = Sets.newHashSet();
+		for (Package child : children) {
+			packageReferences.addAll(child.accumulatedPackageReferences());
+		}
+		packageReferences.addAll(ownPackageReferences);
+
+		return packageReferences;
+	}
+
+	private Package getChild(String relativeName) {
+		for (Package child : children) {
+			if (child.name.equals(this.name + "." + relativeName)) {
+				return child;
+			}
+		}
 		return null;
 	}
+	
+	List<Package> flatten() {
+		List<Package> flattenedHierarchy = Lists.newArrayList();
+		flattenedHierarchy = Lists.newArrayList(this);
+		
+		for (Package child : children) {
+			flattenedHierarchy.addAll(child.flatten());
+			
+		}
+		return flattenedHierarchy;
+	}
 
-    private Set<PackageReference> getPackageReferences() {
-        Set<PackageReference> packageReferences = Sets.newHashSet();
-        for (Package child : children) {
-            packageReferences.addAll(child.getPackageReferences());
-        }
-        packageReferences.addAll(ownPackageReferences);
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Package)) {
+			return false;
+		}
+		Package castOther = (Package) other;
+		return new EqualsBuilder().append(name, castOther.name).isEquals();
+	}
 
-        return packageReferences;
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(name).hashCode();
+	}
 
-    private boolean referredByEachOther(Package that) {
-        boolean thisReferToThat = false;
-        boolean thatReferToThis = false;
-        for (PackageReference packageReference : that.getPackageReferences()) {
-            if (packageReference.startsWith(name)) {
-                thatReferToThis = true;
-                continue;
-            }
-        }
-        for (PackageReference packageReference : this.getPackageReferences()) {
-            if (packageReference.startsWith(that.name)) {
-                thisReferToThat = true;
-                continue;
-            }
-        }
-        return thisReferToThat && thatReferToThis;
-    }
-
-    private Package getChild(String relativeName) {
-        for (Package child : children) {
-            if (child.name.equals(this.name + "." + relativeName)) {
-                return child;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Package)) {
-            return false;
-        }
-        Package castOther = (Package) other;
-        return new EqualsBuilder().append(name, castOther.name).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(name).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
 }

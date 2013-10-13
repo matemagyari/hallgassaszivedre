@@ -1,6 +1,7 @@
 package home.hallgassaszivedre.app.service;
 
 import home.hallgassaszivedre.app.bootstrapper.Bootstrapper;
+import home.hallgassaszivedre.app.x.XX;
 import home.hallgassaszivedre.domain.model.Puff;
 import home.hallgassaszivedre.domain.model.PuffRepository;
 import home.hallgassaszivedre.infrastructure.persistence.StoreBasedPuffRepository;
@@ -15,7 +16,7 @@ public class CloudAppService {
   //TODO test
 	StoreBasedPuffRepository basedPuffRepository;
 	//TODO test
-	Bootstrapper a;
+	XX x;
     @Inject
     public PuffRepository puffRepository;
     

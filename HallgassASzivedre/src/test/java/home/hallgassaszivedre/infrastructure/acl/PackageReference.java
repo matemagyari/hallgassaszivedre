@@ -1,6 +1,8 @@
 package home.hallgassaszivedre.infrastructure.acl;
 
-public class PackageReference {
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+public class PackageReference implements Comparable<PackageReference> {
 	
 	private final String name;
 	
@@ -14,4 +16,34 @@ public class PackageReference {
 		return name.startsWith(str);
 	}
 
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof PackageReference)) {
+            return false;
+        }
+        PackageReference castOther = (PackageReference) other;
+        
+        return name.equals(castOther.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                        .append(name)
+                        .hashCode();
+    }
+
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+
+	@Override
+	public int compareTo(PackageReference that) {
+		return name.compareTo(that.name);
+	}
+    
+    
 }

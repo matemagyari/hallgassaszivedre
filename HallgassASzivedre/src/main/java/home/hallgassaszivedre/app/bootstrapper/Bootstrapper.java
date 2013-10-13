@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Lazy;
 @Named
 public class Bootstrapper {
     //TODO test
-    home.hallgassaszivedre.infrastructure.http.CloudServlet cloudServlet = new home.hallgassaszivedre.infrastructure.http.CloudServlet();
   //TODO test
     CloudAppService appService;
 	@Resource
