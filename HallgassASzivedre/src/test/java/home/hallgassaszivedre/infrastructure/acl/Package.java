@@ -119,11 +119,15 @@ public class Package {
 		}
 
 		for (PackageReference reference : this.accumulatedPackageReferences()) {
-			if (reference.startsWith(aPackage.name)) {
+			if (aPackage.pointsInside(reference)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private boolean pointsInside(PackageReference reference) {
+		return reference.startsWith(name);
 	}
 
 	private boolean explicitlyRefersTo(Package aPackage) {
