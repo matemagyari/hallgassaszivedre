@@ -1,9 +1,9 @@
 package home.hallgassaszivedre.infrastructure.acl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jdepend.framework.JDepend;
@@ -58,8 +58,13 @@ public class DesignTest {
 			allCycles.addAll(aCycles);
 		}
 		
-		//List<Cycle> detectCycles = basePackage.detectCycles(new ArrayList<PackageReference>(), new ArrayList<Cycle>());
-		//System.err.println(detectCycles);
+		System.err.println("\nAll new algorithm\n");
+		Map<PackageReference, Package> references = basePackage.toMap();
+		List<Cycle> detectCycles = basePackage.detectCycles(references);
+		for (Cycle cycle : detectCycles) {
+		    System.err.println(cycle);
+            
+        }
     }
 
 
